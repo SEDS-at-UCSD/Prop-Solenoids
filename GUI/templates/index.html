@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Serial Communication</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>SEDS at UC San Diego Propulsion Solenoid Controller</h1>
+    <img src="{{ url_for('static', filename='resources/Logo.png') }}" alt="Logo" width="200">
+
+    <div class="container">
+        <div class="row">
+            <button class="connect-button" id="connectbutton" onclick="connectSerial()">Connect</button>
+        </div>
+    </div>
+
+    <!-- Serial port selection dropdown for Port 1 -->
+    <label for="serialPort1">Select Serial Port 1:</label>
+    <select id="serialPort1">
+        {% for port in available_ports %}
+            <option value="{{ port }}">{{ port }}</option>
+        {% endfor %}
+    </select>
+
+    <div class="container">
+        <div class="row">
+            {% for channel in range(5) %}
+            <button class="button" id="port1-button{{channel}}-on" onclick="toggleChannel(0, 1, {{ channel }})">Sol {{ channel }} On</button>
+            <button class="button" id="port1-button{{channel}}-off" onclick="toggleChannel(0, 0, {{ channel }})">Sol {{ channel }} Off</button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Serial port selection dropdown for Port 2 -->
+    <label for="serialPort2">Select Serial Port 2:</label>
+    <select id="serialPort2">
+        {% for port in available_ports %}
+            <option value="{{ port }}">{{ port }}</option>
+        {% endfor %}
+    </select>
+
+    <div class="container">
+        <div class="row">
+            {% for channel in range(5) %}
+            <button class="button" id="port2-button{{channel}}-on" onclick="toggleChannel(1, 1, {{ channel }})">Sol {{ channel }} On</button>
+            <button class="button" id="port2-button{{channel}}-off" onclick="toggleChannel(1, 0, {{ channel }})">Sol {{ channel }} Off</button>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <script>
+        async function toggleChannel(port, state, channel) {
+            var selectedPort1 = document.getElementById("serialPort1").value;
+            var selectedPort2 = document.getElementById("serialPort2").value;
+            
+            var command = String(channel) + String(state);
+            var response = "";
+            // Send commands to both selected ports
+            if (port == 0){
+                response = await fetch('/toggle_channel', {
+                    method: 'POST',
+                    body: `port=${selectedPort1}&command=${command}`,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                });
+            }
+            if (port == 1){
+                response = await fetch('/toggle_channel', {
+                    method: 'POST',
+                    body: `port=${selectedPort2}&command=${command}`,
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                });
+            }
+            const data = await response.text();
+            const sendButtonOn = document.getElementById("port"+String(port+1)+"-button"+String(channel)+"-on");
+            const sendButtonOff = document.getElementById("port"+String(port+1)+"-button"+String(channel)+"-off");
+            if (data == "ON"){
+                sendButtonOn.style.backgroundColor = 'green';
+                sendButtonOff.style.backgroundColor = 'gray';
+            }else if (data == "OFF"){
+                sendButtonOn.style.backgroundColor = 'gray';
+                sendButtonOff.style.backgroundColor = 'red';
+            }
+        }
+
+        async function connectSerial() {
+            var selectedPort1 = document.getElementById("serialPort1").value;
+            var selectedPort2 = document.getElementById("serialPort2").value;
+            
+            // Send connect requests to both selected ports
+            
+            const rep1 = await fetch('/connect_serial', {
+                method: 'POST',
+                body: `port1=${selectedPort1}`,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
+
+            const rep2 = await fetch('/connect_serial', {
+                method: 'POST',
+                body: `port2=${selectedPort2}`,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
+
+            const data1 = await rep1.text();
+            const data2 = await rep2.text();
+            console.log(data1)
+            console.log(data2)
+            if (data1 == "Serial connection established" && data2 == "Serial connection established"){
+                const connButton = document.getElementById("connectbutton");
+                connButton.style.backgroundColor= 'green'; /* Green background color for "Connect" button */
+            }
+            
+        }
+        function keepPageActive() {
+            // Simulate moving the mouse (this may prevent screen dimming)
+            const event = new MouseEvent('mousemove', {
+                bubbles: true,
+                cancelable: true,
+                view: window
+            });
+            document.dispatchEvent(event);
+        }
+
+        // Call keepPageActive every 30 seconds (adjust the interval as needed)
+        const intervalId = setInterval(keepPageActive, 30000);
+
+        // To stop preventing idle, you can clear the interval
+        // clearInterval(intervalId);
+    </script>
+</body>
+</html>
