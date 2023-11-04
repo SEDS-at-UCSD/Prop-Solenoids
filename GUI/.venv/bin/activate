@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/DarellCHUA/Documents/Prop PCB Solenoids/.venv"
+VIRTUAL_ENV="/Users/DarellCHUA/Documents/GitHub/Prop-Solenoids/GUI/.venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

@@ -1,6 +1,4 @@
-#!/bin/sh
-'''exec' "/Users/DarellCHUA/Documents/Prop PCB Solenoids/.venv/bin/python" "$0" "$@"
-' '''
+#!/Users/DarellCHUA/Documents/GitHub/Prop-Solenoids/GUI/.venv/bin/python3.11
 # -*- coding: utf-8 -*-
 import re
 import sys

@@ -30,7 +30,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Users/DarellCHUA/Documents/Prop PCB Solenoids/.venv"
+set -gx VIRTUAL_ENV "/Users/DarellCHUA/Documents/GitHub/Prop-Solenoids/GUI/.venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH
