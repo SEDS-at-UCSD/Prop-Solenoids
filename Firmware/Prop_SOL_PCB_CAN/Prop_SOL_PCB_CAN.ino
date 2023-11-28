@@ -71,7 +71,7 @@ void setup() {
   channelQueue = xQueueCreate(1, sizeof(struct PinStatus));
 
   twai_general_config_t g_config = TWAI_GENERAL_CONFIG_DEFAULT((gpio_num_t)CAN_TX, (gpio_num_t)CAN_RX, TWAI_MODE_NORMAL);
-  twai_timing_config_t t_config = TWAI_TIMING_CONFIG_125KBITS();
+  twai_timing_config_t t_config = TWAI_TIMING_CONFIG_500KBITS();
   twai_filter_config_t f_config = TWAI_FILTER_CONFIG_ACCEPT_ALL();
 
   // Install and start the TWAI driver
@@ -106,7 +106,7 @@ void setup() {
   xTaskCreatePinnedToCore(receiveTask, "Receive Task", 2048, NULL, 1, &receiveTaskHandle, 1);
 
   Serial.println("RTOS Tasks Created");
-}
+ }
 
 void loop() {
   // Check if there's power data in the queue
